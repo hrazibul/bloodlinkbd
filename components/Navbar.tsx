@@ -8,9 +8,18 @@ interface NavbarProps {
   onLogout: () => void;
   isAdmin: boolean;
   onAdminClick: () => void;
+  onProfileClick: () => void;
 }
 
-const Navbar: React.FC<NavbarProps> = ({ onRegisterClick, onLoginClick, user, onLogout, isAdmin, onAdminClick }) => {
+const Navbar: React.FC<NavbarProps> = ({ 
+  onRegisterClick, 
+  onLoginClick, 
+  user, 
+  onLogout, 
+  isAdmin, 
+  onAdminClick,
+  onProfileClick 
+}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   return (
@@ -28,17 +37,28 @@ const Navbar: React.FC<NavbarProps> = ({ onRegisterClick, onLoginClick, user, on
           </div>
 
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-            <a className="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="#">হোম</a>
-            <button 
-              onClick={onRegisterClick}
-              className="text-text-light dark:text-text-dark hover:text-primary transition-colors bg-transparent border-none cursor-pointer font-medium"
-            >
-              রক্তদাতা হোন
-            </button>
+            <a className="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'}); }}>হোম</a>
+            
+            {!user && (
+              <button 
+                onClick={onRegisterClick}
+                className="text-text-light dark:text-text-dark hover:text-primary transition-colors bg-transparent border-none cursor-pointer font-medium"
+              >
+                রক্তদাতা হোন
+              </button>
+            )}
+            
             <a className="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="#organizations">সংগঠনসমূহ</a>
             
             {user ? (
               <div className="flex items-center gap-4">
+                <button 
+                  onClick={onProfileClick}
+                  className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-lg font-bold hover:bg-gray-200 transition-all flex items-center gap-2"
+                >
+                  <span className="material-icons-outlined text-sm">account_circle</span>
+                  প্রোফাইল
+                </button>
                 {isAdmin && (
                   <button 
                     onClick={onAdminClick}
@@ -49,7 +69,7 @@ const Navbar: React.FC<NavbarProps> = ({ onRegisterClick, onLoginClick, user, on
                 )}
                 <button 
                   onClick={onLogout}
-                  className="bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 px-4 py-2 rounded-lg hover:bg-gray-200 transition-all font-bold"
+                  className="text-muted-light dark:text-muted-dark hover:text-primary transition-all font-bold text-xs"
                 >
                   লগআউট
                 </button>
@@ -81,13 +101,17 @@ const Navbar: React.FC<NavbarProps> = ({ onRegisterClick, onLoginClick, user, on
       {isMenuOpen && (
         <div className="md:hidden bg-surface-light dark:bg-surface-dark border-t dark:border-gray-800 p-4 space-y-4 shadow-xl animate-fade-in">
           <a className="block text-text-light dark:text-text-dark font-medium px-2" href="#">হোম</a>
-          <button onClick={(e) => { onRegisterClick(e); setIsMenuOpen(false); }} className="block w-full text-left text-text-light dark:text-text-dark font-medium px-2">রক্তদাতা হোন</button>
-          {user && isAdmin && (
-            <button onClick={() => { onAdminClick(); setIsMenuOpen(false); }} className="block w-full text-left text-primary font-bold px-2">ড্যাশবোর্ড</button>
+          {!user && <button onClick={(e) => { onRegisterClick(e); setIsMenuOpen(false); }} className="block w-full text-left text-text-light dark:text-text-dark font-medium px-2">রক্তদাতা হোন</button>}
+          {user && (
+            <>
+              <button onClick={() => { onProfileClick(); setIsMenuOpen(false); }} className="block w-full text-left text-text-light dark:text-text-dark font-medium px-2">আমার প্রোফাইল</button>
+              {isAdmin && (
+                <button onClick={() => { onAdminClick(); setIsMenuOpen(false); }} className="block w-full text-left text-primary font-bold px-2">অ্যাডমিন ড্যাশবোর্ড</button>
+              )}
+              <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="w-full bg-gray-100 text-gray-600 py-3.5 rounded-xl font-bold">লগআউট</button>
+            </>
           )}
-          {user ? (
-            <button onClick={() => { onLogout(); setIsMenuOpen(false); }} className="w-full bg-gray-100 text-gray-600 py-3.5 rounded-xl font-bold">লগআউট</button>
-          ) : (
+          {!user && (
             <button onClick={() => { onLoginClick(); setIsMenuOpen(false); }} className="w-full bg-primary text-white py-3.5 rounded-xl flex items-center justify-center gap-2 shadow-lg">
               <span className="material-icons-outlined text-sm">person</span> লগইন
             </button>

@@ -1,7 +1,7 @@
 
-// Use namespace imports and destructuring to fix "no exported member" errors in environments with strict ESM/CJS resolution
-import * as firebaseApp from "firebase/app";
-import * as firebaseAuth from "firebase/auth";
+// Use named imports to fix property access errors in Modular Firebase SDK (v9+)
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 /**
@@ -22,11 +22,8 @@ const firebaseConfig = {
 // Admin Email Identity
 export const ADMIN_EMAIL = 'email2razibul@gmail.com';
 
-// Destructure modular functions from the namespace imports to satisfy TypeScript's export checks
-const { initializeApp, getApps, getApp } = firebaseApp;
-const { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } = firebaseAuth;
-
 // Initialize Firebase App
+// Directly using the imported initializeApp, getApps, and getApp functions
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Firebase Services explicitly with the app instance

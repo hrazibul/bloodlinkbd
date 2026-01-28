@@ -12,13 +12,14 @@ import RegistrationModal from './components/RegistrationModal';
 import LoginModal from './components/LoginModal';
 import PostRequestModal from './components/PostRequestModal';
 import AdminDashboard from './components/AdminDashboard';
+import ProfileDashboard from './components/ProfileDashboard';
 import { SearchFilters, Donor, Ad } from './types';
 import { collection, query, where, getDocs, limit } from 'firebase/firestore';
-// Fix: Import GoogleGenAI for AI features
 import { GoogleGenAI } from "@google/genai";
 
 const App: React.FC = () => {
   const [isAdminMode, setIsAdminMode] = useState(false);
+  const [isProfileMode, setIsProfileMode] = useState(false);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [isAdmin, setIsAdmin] = useState(false);
   
@@ -30,7 +31,6 @@ const App: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [activeAd, setActiveAd] = useState<Ad | null>(null);
 
-  // Gemini AI Assistant state
   const [aiQuery, setAiQuery] = useState('');
   const [aiResponse, setAiResponse] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
@@ -51,13 +51,11 @@ const App: React.FC = () => {
     return () => unsubscribe();
   }, []);
 
-  // AI Assistant handler using Gemini API
   const handleAiAssistant = async () => {
     if (!aiQuery.trim()) return;
     setAiLoading(true);
     setAiResponse('');
     try {
-      // Create a new instance right before use to ensure updated environment variables
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
       const response = await ai.models.generateContent({
         model: 'gemini-3-flash-preview',
@@ -92,6 +90,7 @@ const App: React.FC = () => {
   const handleLogout = async () => {
     await signOut(auth);
     setIsAdminMode(false);
+    setIsProfileMode(false);
   };
 
   const handleSearch = async (filters: SearchFilters) => {
@@ -102,7 +101,6 @@ const App: React.FC = () => {
       const donorsRef = collection(db, "donors");
       let q = query(donorsRef);
       
-      // Applying filters if selected
       if (filters.division) q = query(q, where("division", "==", filters.division));
       if (filters.district) q = query(q, where("district", "==", filters.district));
       if (filters.upazila) q = query(q, where("upazila", "==", filters.upazila));
@@ -131,6 +129,10 @@ const App: React.FC = () => {
     return <AdminDashboard onBack={() => setIsAdminMode(false)} />;
   }
 
+  if (isProfileMode && currentUser) {
+    return <ProfileDashboard userId={currentUser.uid} onBack={() => setIsProfileMode(false)} />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-[#FDFDFD] dark:bg-[#0F0F10] relative">
       <Navbar 
@@ -139,7 +141,8 @@ const App: React.FC = () => {
         user={currentUser}
         onLogout={handleLogout}
         isAdmin={isAdmin}
-        onAdminClick={() => setIsAdminMode(true)}
+        onAdminClick={() => { setIsAdminMode(true); setIsProfileMode(false); }}
+        onProfileClick={() => { setIsProfileMode(true); setIsAdminMode(false); }}
       />
       
       <main className="flex-grow">
@@ -147,7 +150,6 @@ const App: React.FC = () => {
         <LiveRequestTicker />
         <SearchBox onSearch={handleSearch} />
 
-        {/* Gemini Powered AI Helper Section */}
         <section className="max-w-5xl mx-auto px-4 mt-8 md:mt-12">
           <div className="bg-gradient-to-r from-red-50 to-white dark:from-red-900/10 dark:to-surface-dark p-6 rounded-2xl border border-red-100 dark:border-red-900/30 shadow-md">
             <div className="flex items-center gap-3 mb-4">
