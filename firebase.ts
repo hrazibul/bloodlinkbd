@@ -1,14 +1,11 @@
-
-// Use direct @firebase scoped imports to resolve named export errors in specific environments
-import { initializeApp, getApps, getApp } from "@firebase/app";
-import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@firebase/auth";
-import { getFirestore } from "@firebase/firestore";
+// Consolidated Firebase modular imports to resolve "no exported member" errors by matching working single-line patterns
+import { initializeApp, getApps, getApp } from "firebase/app";
+import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 /**
  * Firebase configuration for BloodLink BD.
- * Connected to project: bloodlinkbd-e3f3f
  */
-
 const firebaseConfig = {
   apiKey: "AIzaSyASaT3Hd-VtIecYCDgBdRcEbYRik6uXvvQ",
   authDomain: "bloodlinkbd-e3f3f.firebaseapp.com",
@@ -19,18 +16,16 @@ const firebaseConfig = {
   appId: "1:469618421134:web:a92d193007e37548fe88df"
 };
 
-// Admin Email Identity
 export const ADMIN_EMAIL = 'email2razibul@gmail.com';
 
-// Initialize Firebase App
-// Directly using the imported initializeApp, getApps, and getApp functions
+// Initialize Firebase App instance
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize Firebase Services explicitly with the app instance
+// Initialize and export services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Re-export standard Auth functions for modular usage across the app
+// Export standard Auth functions
 export { 
   onAuthStateChanged, 
   signOut, 

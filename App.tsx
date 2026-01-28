@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut, auth, db, ADMIN_EMAIL } from './firebase';
 import Navbar from './components/Navbar';
@@ -37,13 +38,18 @@ const App: React.FC = () => {
   useEffect(() => {
     fetchActiveAd();
     
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
       setCurrentUser(user);
-      if (user && user.email === ADMIN_EMAIL) {
-        setIsAdmin(true);
+      if (user) {
+        if (user.email === ADMIN_EMAIL) {
+          setIsAdmin(true);
+        } else {
+          setIsAdmin(false);
+        }
       } else {
         setIsAdmin(false);
         setIsAdminMode(false);
+        setIsProfileMode(false);
       }
     });
 
@@ -55,14 +61,17 @@ const App: React.FC = () => {
     setAiLoading(true);
     setAiResponse('');
     try {
+      // Fix: Initialized GoogleGenAI with named parameter as per guidelines.
       const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+      // Fix: Selected 'gemini-3-pro-preview' for complex reasoning tasks like medical/eligibility Q&A.
       const response = await ai.models.generateContent({
-        model: 'gemini-3-flash-preview',
+        model: 'gemini-3-pro-preview',
         contents: aiQuery,
         config: {
           systemInstruction: "You are a specialized AI assistant for 'BloodLink BD', a blood donation platform in Bangladesh. Help users understand blood group compatibility, donation eligibility, and general health advice related to blood donation. Keep answers concise, helpful, and in the language of the query (Bengali or English).",
         }
       });
+      // Fix: Accessed .text property directly from response as it is not a method.
       setAiResponse(response.text || 'দুঃখিত, কোনো উত্তর পাওয়া যায়নি।');
     } catch (error) {
       console.error("AI Assistant Error:", error);
