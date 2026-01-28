@@ -1,0 +1,35 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // এই ফাংশনটি চেক করে ইউজারটি অ্যাডমিন কি না
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == "email2razibul@gmail.com";
+    }
+
+    // Donors কালেকশন: সবাই পড়তে পারবে, কিন্তু রেজিস্ট্রেশনের জন্য ইউজার নিজের তথ্য দিতে পারবে। 
+    // তথ্য পরিবর্তন বা মুছে ফেলা শুধুমাত্র অ্যাডমিন করতে পারবে।
+    match /donors/{donorId} {
+      allow read: if true;
+      allow create: if request.auth != null && request.auth.uid == donorId;
+      allow update, delete: if isAdmin();
+    }
+
+    // Ads কালেকশন: সবাই দেখতে পারবে, কিন্তু শুধুমাত্র অ্যাডমিন পরিবর্তন করতে পারবে।
+    match /ads/{adId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Blood Requests: সবাই দেখতে পারবে এবং পোস্ট করতে পারবে (জরুরি প্রয়োজনে), অ্যাডমিন ডিলিট করতে পারবে।
+    match /blood_requests/{requestId} {
+      allow read: if true;
+      allow create: if true;
+      allow update, delete: if isAdmin();
+    }
+    
+    // ডিফল্টভাবে অন্য সব কালেকশন শুধুমাত্র অ্যাডমিন কন্ট্রোল করতে পারবে
+    match /{document=**} {
+      allow read, write: if isAdmin();
+    }
+  }
+}
