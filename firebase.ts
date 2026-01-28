@@ -1,4 +1,3 @@
-// Consolidated Firebase modular imports to resolve "no exported member" errors by matching working single-line patterns
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
@@ -18,14 +17,14 @@ const firebaseConfig = {
 
 export const ADMIN_EMAIL = 'email2razibul@gmail.com';
 
-// Initialize Firebase App instance
+// Initialize Firebase App instance correctly
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Initialize and export services
+// Initialize and export services from the app instance
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Export standard Auth functions
+// Export standard Auth functions for use in other components
 export { 
   onAuthStateChanged, 
   signOut, 
