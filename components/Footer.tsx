@@ -1,7 +1,11 @@
 
 import React from 'react';
 
-const Footer: React.FC = () => {
+interface FooterProps {
+  onNavClick: (view: any) => void;
+}
+
+const Footer: React.FC<FooterProps> = ({ onNavClick }) => {
   return (
     <footer className="bg-black dark:bg-[#0A0A0A] text-gray-400 py-16 border-t border-gray-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -22,9 +26,21 @@ const Footer: React.FC = () => {
           <div>
             <h4 className="text-white font-bold text-lg mb-6">দ্রুত লিংক</h4>
             <ul className="space-y-4 text-sm">
-              <li><a className="hover:text-primary transition-colors flex items-center gap-2" href="#"><span className="material-icons-outlined text-xs">arrow_forward</span> রক্তদানের সুবিধা</a></li>
-              <li><a className="hover:text-primary transition-colors flex items-center gap-2" href="#"><span className="material-icons-outlined text-xs">arrow_forward</span> নিকটস্থ ব্লাড ব্যাংক</a></li>
-              <li><a className="hover:text-primary transition-colors flex items-center gap-2" href="#"><span className="material-icons-outlined text-xs">arrow_forward</span> প্রাইভেসি পলিসি</a></li>
+              <li>
+                <button onClick={() => onNavClick('benefits')} className="hover:text-primary transition-colors flex items-center gap-2">
+                  <span className="material-icons-outlined text-xs">arrow_forward</span> রক্তদানের সুবিধা
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavClick('bloodbanks')} className="hover:text-primary transition-colors flex items-center gap-2">
+                  <span className="material-icons-outlined text-xs">arrow_forward</span> নিকটস্থ ব্লাড ব্যাংক
+                </button>
+              </li>
+              <li>
+                <button onClick={() => onNavClick('privacy')} className="hover:text-primary transition-colors flex items-center gap-2">
+                  <span className="material-icons-outlined text-xs">arrow_forward</span> প্রাইভেসি পলিসি
+                </button>
+              </li>
             </ul>
           </div>
 

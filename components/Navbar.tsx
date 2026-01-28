@@ -9,6 +9,7 @@ interface NavbarProps {
   isAdmin: boolean;
   onAdminClick: () => void;
   onProfileClick: () => void;
+  onHomeClick: () => void;
 }
 
 const Navbar: React.FC<NavbarProps> = ({ 
@@ -18,15 +19,22 @@ const Navbar: React.FC<NavbarProps> = ({
   onLogout, 
   isAdmin, 
   onAdminClick,
-  onProfileClick 
+  onProfileClick,
+  onHomeClick
 }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const handleHomeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    onHomeClick();
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  };
 
   return (
     <nav className="bg-surface-light dark:bg-surface-dark shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-20">
-          <div className="flex items-center gap-4 cursor-pointer" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
+          <div className="flex items-center gap-4 cursor-pointer" onClick={handleHomeClick}>
             <div className="relative w-12 h-14 flex items-center justify-center">
               <span className="material-icons-outlined text-primary text-4xl relative z-10 drop-shadow-md">water_drop</span>
             </div>
@@ -37,7 +45,7 @@ const Navbar: React.FC<NavbarProps> = ({
           </div>
 
           <div className="hidden md:flex items-center space-x-8 text-sm font-medium">
-            <a className="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="#" onClick={(e) => { e.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'}); }}>হোম</a>
+            <a className="text-text-light dark:text-text-dark hover:text-primary transition-colors" href="#" onClick={handleHomeClick}>হোম</a>
             
             {!user && (
               <button 
@@ -100,7 +108,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
       {isMenuOpen && (
         <div className="md:hidden bg-surface-light dark:bg-surface-dark border-t dark:border-gray-800 p-4 space-y-4 shadow-xl animate-fade-in">
-          <a className="block text-text-light dark:text-text-dark font-medium px-2" href="#">হোম</a>
+          <a className="block text-text-light dark:text-text-dark font-medium px-2" href="#" onClick={handleHomeClick}>হোম</a>
           {!user && <button onClick={(e) => { onRegisterClick(e); setIsMenuOpen(false); }} className="block w-full text-left text-text-light dark:text-text-dark font-medium px-2">রক্তদাতা হোন</button>}
           {user && (
             <>
