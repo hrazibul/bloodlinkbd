@@ -1,19 +1,8 @@
 
-// Fix: Using property access to bypass environment-specific TypeScript resolution issues for Firebase sub-modules
-import * as appModule from 'firebase/app';
-const initializeApp = (appModule as any).initializeApp;
-
-// Fix: Bypassing potential missing named exports in firebase/auth by using the module object
-import * as authModule from 'firebase/auth';
-const { 
-  getAuth, 
-  onAuthStateChanged, 
-  signOut, 
-  createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
-} = authModule as any;
-
-import { getFirestore } from 'firebase/firestore';
+// Use namespace imports and destructuring to fix "no exported member" errors in environments with strict ESM/CJS resolution
+import * as firebaseApp from "firebase/app";
+import * as firebaseAuth from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 
 /**
  * Firebase configuration for BloodLink BD.
@@ -33,12 +22,21 @@ const firebaseConfig = {
 // Admin Email Identity
 export const ADMIN_EMAIL = 'email2razibul@gmail.com';
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Destructure modular functions from the namespace imports to satisfy TypeScript's export checks
+const { initializeApp, getApps, getApp } = firebaseApp;
+const { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } = firebaseAuth;
 
-// Initialize and export Auth and DB instances
+// Initialize Firebase App
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+
+// Initialize Firebase Services explicitly with the app instance
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
-// Re-exporting common Auth functions to provide a central location for the app.
-export { onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword };
+// Re-export standard Auth functions for modular usage across the app
+export { 
+  onAuthStateChanged, 
+  signOut, 
+  createUserWithEmailAndPassword, 
+  signInWithEmailAndPassword 
+};
