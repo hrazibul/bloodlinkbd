@@ -1,8 +1,8 @@
 
-// Use named imports to fix property access errors in Modular Firebase SDK (v9+)
-import { initializeApp, getApps, getApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+// Use direct @firebase scoped imports to resolve named export errors in specific environments
+import { initializeApp, getApps, getApp } from "@firebase/app";
+import { getAuth, onAuthStateChanged, signOut, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "@firebase/auth";
+import { getFirestore } from "@firebase/firestore";
 
 /**
  * Firebase configuration for BloodLink BD.

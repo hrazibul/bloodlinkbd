@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { onAuthStateChanged, signOut, auth, db, ADMIN_EMAIL } from './firebase';
 import Navbar from './components/Navbar';
@@ -258,8 +257,20 @@ const App: React.FC = () => {
         <span className="material-icons-outlined text-3xl">emergency</span>
       </button>
 
-      <RegistrationModal isOpen={isRegModalOpen} onClose={() => setIsRegModalOpen(false)} />
-      <LoginModal isOpen={isLoginModalOpen} onClose={() => setIsLoginModalOpen(false)} onSuccess={() => {}} />
+      <RegistrationModal isOpen={isRegModalOpen} onClose={() => setIsRegModalOpen(false)} onRegistrationSuccess={() => setIsProfileMode(true)} />
+      <LoginModal 
+        isOpen={isLoginModalOpen} 
+        onClose={() => setIsLoginModalOpen(false)} 
+        onSuccess={(email) => {
+          if (email === ADMIN_EMAIL) {
+            setIsAdminMode(true);
+            setIsProfileMode(false);
+          } else {
+            setIsProfileMode(true);
+            setIsAdminMode(false);
+          }
+        }} 
+      />
       <PostRequestModal isOpen={isPostRequestModalOpen} onClose={() => setIsPostRequestModalOpen(false)} />
       
       <Footer />
