@@ -21,6 +21,7 @@ export const ADMIN_EMAIL = 'email2razibul@gmail.com';
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize and export services from the app instance
+// Explicitly passing 'app' ensures the component is registered on the correct instance
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 
